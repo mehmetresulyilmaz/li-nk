@@ -1,9 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
+from flask_cors import CORS
 import sqlite3
 import random
 import string
 
 app = Flask(__name__)
+CORS(app)
 
 # Veritabanı bağlantısı
 def get_db_connection():
@@ -35,7 +37,7 @@ def shorten_url():
     conn.commit()
     conn.close()
 
-    return jsonify({"short_url": f"http://localhost:5000/{short_code}"})
+    return jsonify({"short_url": f"https://mryilmaz.pythonanywhere.com/{short_code}"})
 
 # Kısaltılmış URL yönlendirme
 @app.route("/<short_code>")
@@ -45,7 +47,7 @@ def redirect_url(short_code):
     conn.close()
     
     if url_entry:
-        return f"Yönlendiriliyorsunuz: {url_entry['long_url']}", 302  # Burada gerçek yönlendirme eklenebilir
+        return redirect(url_entry['long_url'])
     else:
         return "URL bulunamadı!", 404
 
